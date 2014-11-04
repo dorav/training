@@ -26,6 +26,9 @@ public:
 	Unlimited& operator++();
 	Unlimited operator++(int);
 
+	Unlimited operator-(const Unlimited& other) const;
+	void operator-=(const Unlimited& other);
+
 	operator string() const;
 	bool operator ==(const string& str) const;
 private:
@@ -42,10 +45,17 @@ private:
 	void parseNonNegativeStringRepresentation(string::const_reverse_iterator begin,
 			 	 	 	 	 	 	 	 	  string::const_reverse_iterator end);
 	void addDigitsFrom(const Unlimited& other);
-
+	void subtractBy(const Unlimited& other);
 	const Unlimited& getLongerNumber(const Unlimited& first, const Unlimited& sec) const;
 	const Unlimited& getShorterNumber(const Unlimited& first, const Unlimited& sec) const;
 	bool isSameSign(const Unlimited& other) const;
+	int borrowAmount(bool shouldBorrow) const;
+	bool hasLeadingZero() const;
+	void removeLeadingZeros();
+	string extractNextDigits(const string::const_reverse_iterator& leastSignificant,
+							 string::const_reverse_iterator& mostSignificant);
+	void printLastDigit(stringstream& out) const;
+	void printWithFillers(stringstream& out) const;
 
 	LZVector digits;
 	bool isNegative;
