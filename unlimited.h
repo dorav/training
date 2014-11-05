@@ -13,6 +13,7 @@
 #include <vector>
 
 using namespace std;
+class LZVector;
 
 class Unlimited
 {
@@ -31,6 +32,7 @@ public:
 
 	operator string() const;
 	bool operator ==(const string& str) const;
+	bool isAbsolutlyBigger(const Unlimited& other) const;
 private:
 	class LeadingZerosVector : public vector<int>
 	{
@@ -45,17 +47,17 @@ private:
 	void parseNonNegativeStringRepresentation(string::const_reverse_iterator begin,
 			 	 	 	 	 	 	 	 	  string::const_reverse_iterator end);
 	void addDigitsFrom(const Unlimited& other);
-	void subtractBy(const Unlimited& other);
-	const Unlimited& getLongerNumber(const Unlimited& first, const Unlimited& sec) const;
-	const Unlimited& getShorterNumber(const Unlimited& first, const Unlimited& sec) const;
 	bool isSameSign(const Unlimited& other) const;
 	int borrowAmount(bool shouldBorrow) const;
-	bool hasLeadingZero() const;
-	void removeLeadingZeros();
+	void subtractBy(const LZVector& other, LZVector& result) const;
+	static void removeLeadingZeros(LZVector& removeFrom);
+	static bool hasLeadingZero(LZVector& result);
 	string extractNextDigits(const string::const_reverse_iterator& leastSignificant,
 							 string::const_reverse_iterator& mostSignificant);
 	void printLastDigit(stringstream& out) const;
 	void printWithFillers(stringstream& out) const;
+	void differentSignAddition(const Unlimited& other);
+	void sameSignSubtraction(const Unlimited& other);
 
 	LZVector digits;
 	bool isNegative;

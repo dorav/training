@@ -203,6 +203,203 @@ TEST(UnlimitedSelfSubtractTests, subtractWhenTheResultIsZero)
 	ASSERT_EQ(n1, "0");
 }
 
+TEST(UnlimitedSelfSumSignTests, addingANegativeToALargePositive_ShouldRemainPositive)
+{
+	Unlimited n1("12345");
+	Unlimited n2("-1234");
+
+	n1 += n2;
+	ASSERT_EQ(n1, "11111");
+}
+
+TEST(UnlimitedSelfSumSignTests, addingANegativeToASmallPositive_ShouldTurnNegative)
+{
+	Unlimited n1("5");
+	Unlimited n2("-6");
+
+	n1 += n2;
+	ASSERT_EQ(n1, "-1");
+}
+
+TEST(UnlimitedSelfSumSignTests, addingANegativeToANegative_ShouldRemainNegative)
+{
+	Unlimited n1("-5");
+	Unlimited n2("-6");
+
+	n1 += n2;
+	ASSERT_EQ(n1, "-11");
+}
+
+TEST(UnlimitedSelfSumSignTests, addingASmallPositiveToANegative_ShouldRemainNegative)
+{
+	Unlimited n1("-5");
+	Unlimited n2("3");
+
+	n1 += n2;
+	ASSERT_EQ(n1, "-2");
+}
+
+TEST(UnlimitedSelfSumSignTests, addingALargePositiveToANegative_ShouldTurnPositive)
+{
+	Unlimited n1("-5");
+	Unlimited n2("6");
+
+	n1 += n2;
+	ASSERT_EQ(n1, "1");
+}
+
+TEST(UnlimitedSelfSumSignTests, addingNegativeEqualsToAbs_ShouldResultIn0)
+{
+	Unlimited n1("5");
+	Unlimited n2("-5");
+
+	n1 += n2;
+	ASSERT_EQ(n1, "0");
+}
+
+TEST(UnlimitedSelfSubtractionSignTests, subASmallNegativeFromPositive_ShouldRemainPositive)
+{
+	Unlimited n1("5");
+	Unlimited n2("-3");
+
+	n1 -= n2;
+	ASSERT_EQ(n1, "8");
+}
+
+TEST(UnlimitedSelfSubtractionSignTests, subALargePositiveFromPositive_ShouldTurnNegative)
+{
+	Unlimited n1("5");
+	Unlimited n2("6");
+
+	n1 -= n2;
+	ASSERT_EQ(n1, "-1");
+}
+
+TEST(UnlimitedSelfSubtractionSignTests, subASmallPositiveFromNegative_ShouldRemainNegative)
+{
+	Unlimited n1("-5");
+	Unlimited n2("3");
+
+	n1 -= n2;
+	ASSERT_EQ(n1, "-8");
+}
+
+TEST(UnlimitedSelfSubtractionSignTests, subALargePositiveFromNegative_ShouldRemainNegative)
+{
+	Unlimited n1("-5");
+	Unlimited n2("6");
+
+	n1 -= n2;
+	ASSERT_EQ(n1, "-11");
+}
+
+TEST(UnlimitedSelfSubtractionSignTests, subASmallNegativeFromNegative_ShouldRemainNegative)
+{
+	Unlimited n1("-5");
+	Unlimited n2("-3");
+
+	n1 -= n2;
+	ASSERT_EQ(n1, "-2");
+}
+
+TEST(UnlimitedSelfSubtractionSignTests, subALargeNegativeFromNegative_ShouldTurnPositive)
+{
+	Unlimited n1("-5");
+	Unlimited n2("-6");
+
+	n1 -= n2;
+	ASSERT_EQ(n1, "1");
+}
+
+TEST(UnlimitedSelfSubtractionSignTests, subTheSameNumber)
+{
+	Unlimited n1("-5");
+
+	n1 -= n1;
+	ASSERT_EQ(n1, "0");
+}
+
+TEST(UnlimitedDifferentSignTests, addPositiveAndSmallerNegative_ShouldResultPositive)
+{
+	Unlimited n1("5");
+	Unlimited n2("-3");
+
+	auto result = n1 + n2;
+	ASSERT_EQ(result, "2");
+}
+
+TEST(UnlimitedDifferentSignTests, addPositiveAndLargerNegative_ShouldResultNegative)
+{
+	Unlimited n1("5");
+	Unlimited n2("-6");
+
+	auto result = n1 + n2;
+	ASSERT_EQ(result, "-1");
+}
+
+TEST(UnlimitedDifferentSignTests, addNegativeAndNegative_ShouldResultNegative)
+{
+	Unlimited n1("-5");
+	Unlimited n2("-6");
+
+	auto result = n1 + n2;
+	ASSERT_EQ(result, "-11");
+}
+
+TEST(UnlimitedDifferentSignTests, addNegativeAndSmallPositive_ShouldResultNegative)
+{
+	Unlimited n1("-5");
+	Unlimited n2("3");
+
+	auto result = n1 + n2;
+	ASSERT_EQ(result, "-2");
+}
+
+TEST(UnlimitedDifferentSignTests, addNegativeAndLargeNegative_ShouldResultPositive)
+{
+	Unlimited n1("-5");
+	Unlimited n2("6");
+
+	auto result = n1 + n2;
+	ASSERT_EQ(result, "1");
+}
+
+TEST(UnlimitedDifferentSignSubtraction, subtractNegativeFromLargerNegative_ShouldResultNegative)
+{
+	Unlimited n1("-5");
+	Unlimited n2("-3");
+
+	auto result = n1 - n2;
+	ASSERT_EQ(result, "-2");
+}
+
+TEST(UnlimitedDifferentSignSubtraction, subtractNegativeFromSmallerNegative_ShouldResultPositive)
+{
+	Unlimited n1("-5");
+	Unlimited n2("-6");
+
+	auto result = n1 - n2;
+	ASSERT_EQ(result, "1");
+}
+
+TEST(UnlimitedDifferentSignSubtraction, subtractPositiveFromLargerNegative_ShouldResultNegative)
+{
+	Unlimited n1("-5");
+	Unlimited n2("3");
+
+	auto result = n1 - n2;
+	ASSERT_EQ(result, "-8");
+}
+
+TEST(UnlimitedDifferentSignSubtraction, subtractPositiveFromSmallerNegative_ShouldResultNegative)
+{
+	Unlimited n1("-5");
+	Unlimited n2("8");
+
+	auto result = n1 - n2;
+	ASSERT_EQ(result, "-13");
+}
+
 class UnlimitedCreationTests : public ::testing::TestWithParam<string> {};
 
 TEST_P(UnlimitedCreationTests, printingAnUnlimitedShouldYieldTheStringItWasConstructedWith)

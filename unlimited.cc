@@ -21,7 +21,7 @@
 
 using namespace std;
 
-static const int BASE = 1000;
+static const int BASE = 10000;
 
 struct IndexOutOfRangeException : public std::exception {};
 
@@ -151,14 +151,70 @@ Unlimited& Unlimited::operator++()
 	return *this;
 }
 
+struct OrderedCouple
+{
+	OrderedCouple(const Unlimited& smaller_, const Unlimited& bigger_)
+	: smaller(smaller_)
+	, bigger(bigger_)
+	{
+	}
+	const Unlimited& smaller;
+	const Unlimited& bigger;
+};
+
+OrderedCouple orderByAbsoluteValue(const Unlimited& first, const Unlimited& other)
+{
+	if (first.isAbsolutlyBigger(other))
+		return OrderedCouple(other, first);
+	return OrderedCouple(first, other);
+}
+
+void Unlimited::differentSignAddition(const Unlimited& other)
+{
+	OrderedCouple args = orderByAbsoluteValue(*this, other);
+
+	args.bigger.subtractBy(args.smaller.digits, digits);
+	isNegative = args.bigger.isNegative;
+}
+
 void Unlimited::operator+=(const Unlimited& other)
 {
-	addDigitsFrom(other);
+	if (isSameSign(other))
+		addDigitsFrom(other);
+	else
+		differentSignAddition(other);
+}
+
+bool Unlimited::isAbsolutlyBigger(const Unlimited& other) const
+{
+	if (digits.size() > other.digits.size())
+		return true;
+
+	for (unsigned int i = 0; i < digits.size(); ++i)
+	{
+		if (digits[i] > other.digits[i])
+			return true;
+	}
+
+	return false;
 }
 
 void Unlimited::operator-=(const Unlimited& other)
 {
-	subtractBy(other);
+	if (isSameSign(other))
+		sameSignSubtraction(other);
+	else
+		addDigitsFrom(other);
+}
+
+void Unlimited::sameSignSubtraction(const Unlimited& other)
+{
+	OrderedCouple args = orderByAbsoluteValue(*this, other);
+
+	args.bigger.subtractBy(args.smaller.digits, digits);
+
+	if (&args.smaller == this)
+		isNegative = !isNegative;
 }
 
 bool Unlimited::isSameSign(const Unlimited& other) const
@@ -217,32 +273,32 @@ private:
 Unlimited Unlimited::operator-(const Unlimited& other) const
 {
 	Unlimited result(*this);
-	result.subtractBy(other);
+	result -= other;
 	return result;
 }
 
-void Unlimited::subtractBy(const Unlimited& other)
+void Unlimited::subtractBy(const LZVector& other, LZVector& result) const
 {
 	DigitDifference currentDifference(0, 0, 0);
 
 	for (unsigned int i = 0; i < digits.size(); ++i)
 	{
-		currentDifference = DigitDifference(digits[i], other.digits[i], currentDifference.haveBorrowed);
-		digits[i] = currentDifference.difference;
+		currentDifference = DigitDifference(digits[i], other[i], currentDifference.haveBorrowed);
+		result[i] = currentDifference.difference;
 	}
 
-	removeLeadingZeros();
+	removeLeadingZeros(result);
 }
 
-bool Unlimited::hasLeadingZero() const
+bool Unlimited::hasLeadingZero(LZVector& result)
 {
-	return digits.back() == 0;
+	return result.back() == 0;
 }
 
-void Unlimited::removeLeadingZeros()
+void Unlimited::removeLeadingZeros(LZVector& result)
 {
-	while (digits.empty() == false && hasLeadingZero())
-	    digits.pop_back();
+	while (result.empty() == false && hasLeadingZero(result))
+		result.pop_back();
 }
 ostream& operator<<(ostream& out, const Unlimited& number)
 {
